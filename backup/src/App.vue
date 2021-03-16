@@ -1,10 +1,11 @@
 <template>
 	<v-app v-if="login">
 		<Header :user="user"/>
-    
 		<v-main>
 			<v-container>
-				<router-view />
+				<router-view>
+
+				</router-view>
 			</v-container>
 		</v-main>
 	</v-app>
@@ -39,13 +40,12 @@ components: {
       }).catch((error) => {
 
         this.login = false;
-        alert(error);
+        console.log(error);
       });
 	},
   data() {
     return {
-      login: false,
-      drawerRight: null
+      login: false
     }
   },
   computed: {
@@ -71,6 +71,9 @@ components: {
 </script>
 
 <style>
+body {
+  height: 500vh
+}
 
 </style>
 

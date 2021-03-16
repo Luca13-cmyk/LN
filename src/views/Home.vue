@@ -1,18 +1,35 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-layout row wrap>
+      <Slider />
+      <v-divider></v-divider>
+      <!-- <Subject v-for="topic in topics" :key="topic.id" :topic="topic" /> -->
+      
+  </v-layout>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
-export default {
-  name: 'Home',
-  components: {
-    HelloWorld
+import Slider from '../components/Slider.vue';
+// import Subject from '../components/Subject.vue';
+  export default {
+    components: { Slider },
+    computed: {
+      topics() {
+      return this.$store.state.topics;
+    }
+  },
+  mounted () {
+    this.getDatas();
+    console.log(this.topics);
+  },
+  
+  methods: {
+    getDatas  () {
+      this.$store.dispatch("bindTopics", {filter: 'linux', limit: 4});
+    },
   }
 }
 </script>
+
+<style>
+
+</style>
