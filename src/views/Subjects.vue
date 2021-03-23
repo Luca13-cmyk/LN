@@ -7,9 +7,8 @@
     <v-divider></v-divider>
     
       <router-view />
-
-
-
+    
+    
 </div>
 </template>
 

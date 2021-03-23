@@ -42,25 +42,82 @@
                     outlined
                     rounded
                     text
+                    @click="showInfo(topic)"
                 >
-                    Editar
+                    Info
                 </v-btn>
                 </v-card-actions>
             </v-card>
     </v-skeleton-loader>
+
     </v-col>
+
+    <BottomSheets v-if="sheet == true" :sheet="{sheet, subject}"  @closeBottomSheets="sheet = $event" />
+    
+        
+    
+    <v-btn
+   class="animate__animated animate__bounce" 
+  elevation="6"
+  x-large
+  color="red"
+  fab
+  fixed
+  bottom
+  right
+  dark
+  @click="snackbar = true"
+><v-icon>mdi-delete</v-icon></v-btn>
+
+
+<!-- Snack Bar -->
+
+<div class="text-center ma-2">
+    <v-snackbar
+      v-model="snackbar"
+    >
+      {{ text }}
+      {{ id }} ?
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="deleteSubject"
+        >
+          Excluir
+        </v-btn>
+      </template>
+    </v-snackbar>
+  </div>
     </v-row>
+    
+
 </template>
 
 <script>
+import {FirebaseActions} from '../utils/FirebaseActions';
+import BottomSheets from './BottomSheets.vue';
+
 export default {
     props: ['id'], // Subject
+    components: { BottomSheets },
     watch: {
         $route() {
             if (this.topics.length > 0){
                 this.$store.dispatch('unbindTopics');
             }
             this.$store.dispatch('bindTopics', {filter: this.id, limit: 10})
+            this.subject = {id: this.id}
+        }
+    },
+    data() {
+        return {
+            snackbar: false,
+            text: `Tem certeza que deseja excluir `,
+            sheet: false,
+            subject: {id: this.id}
         }
     },
     computed: {
@@ -69,7 +126,22 @@ export default {
         }  
     },
     mounted() {
-        this.$store.dispatch('bindTopics', {filter: this.id, limit: 10}) // Filter only subject (id) topics
+        this.$store.dispatch('bindTopics', {filter: this.id, limit: 100}) // Filter only subject (id) topics
+    },
+    methods: {
+        deleteSubject() {
+
+            FirebaseActions.deleteSubject(this.id).then(() => {
+                this.snackbar = false;
+            }).catch((error) => {
+                console.log(error);
+            })
+        },
+        showInfo(topic) {
+            this.sheet = true;
+            this.subject.topic = topic;
+
+        }
     },
     beforeDestroy() {
     this.$store.dispatch('unbindTopics');
