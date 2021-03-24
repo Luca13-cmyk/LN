@@ -2,30 +2,29 @@
 <div>
 
       <v-tabs class="mt-5">
-        <v-tab @click="subject = 'Linux'">Linux</v-tab>
-        <v-tab @click="subject = 'Windows' ">Windows</v-tab>
-        <v-tab @click="subject = 'Others'">Outros</v-tab>
+        <v-tab :to="{name: 'Subject', params: {id: subject.id}  }"  v-for="subject in subjects" :key="subject.id">{{ subject.id }}</v-tab>
     </v-tabs>
-    <component :is="subject" />
+    <v-divider></v-divider>
+    
+      <router-view />
+    
+    
 </div>
 </template>
 
 <script>
-import Linux from '../components/Linux.vue';
-import Windows from '../components/Windows.vue';
-import Others from '../components/Others.vue';
-
 export default {
-    components: {
-        Linux,
-        Windows,
-        Others
-    },
-    data() {
-        return {
-            subject: 'Linux'
+    computed: {
+        subjects() {
+            return this.$store.state.subjects;
         }
-    }
+    },
+    mounted() {
+      this.$store.dispatch("bindSubjects");
+    },
+    beforeDestroy (){
+    this.$store.dispatch('unbindSubjects');
+  },
 }
 </script>
 

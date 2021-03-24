@@ -11,7 +11,8 @@ export default new Vuex.Store({
     userBind: [],
     userAuth: [],
     subjects: [],
-    topics: []
+    topics: [],
+    links: []
   },
   mutations: {
     ...vuexfireMutations,
@@ -43,6 +44,14 @@ export default new Vuex.Store({
     }),
     unbindTopics: firestoreAction(({ unbindFirestoreRef }) => {
       unbindFirestoreRef('topics');
+    }),
+    bindLinks: firestoreAction((context) => {
+      return context.bindFirestoreRef('links', db.collection('users')
+        .doc(context.state.userAuth.user.email)
+        .collection("links"));
+    }),
+    unbindLinks: firestoreAction(({ unbindFirestoreRef }) => {
+      unbindFirestoreRef('links');
     }), 
   },
   

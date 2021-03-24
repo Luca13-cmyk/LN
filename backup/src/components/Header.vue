@@ -48,7 +48,7 @@
 
 
           <v-list-item-content>
-            <v-list-item-title>Users</v-list-item-title>
+            <v-list-item-title>Usuários</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item
@@ -65,6 +65,7 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
+      
 
     </v-navigation-drawer>
     <v-app-bar
@@ -83,27 +84,40 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
+      
+        <Modal />
 
-      <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
-      </v-btn>
-
-      <v-btn icon>
+      <v-btn @click="drawerRight = !drawerRight" icon>
         <v-icon>mdi-dots-vertical</v-icon>
       </v-btn>
     </v-app-bar>
+    <v-navigation-drawer
+    v-model="drawerRight"
+    fixed
+    right
+    temporary
+    app
+    min-width="300"
+    >
+    <Contacts />
+
+  </v-navigation-drawer>
 </div>
 </template>
 
 <script>
+import Modal from './Modal.vue';
+import Contacts from './Contacts.vue'
+
   export default {
       props: ['user'],
+      components: {
+        Modal, Contacts
+      },
     data () {
       return {
         drawer: null,
+        drawerRight: false
       }
     },
     computed: {
@@ -115,7 +129,4 @@
 </script>
 
 <style>
-.online {
-    color: rgb(7, 253, 7);
-}
 </style>

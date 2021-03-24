@@ -1,32 +1,40 @@
 <template>
-<v-flex class="pr-3 pb-3 mt-5" xs12 md6 lg4>
+<v-row class="mt-3">  
+    
+   <v-col class="mt-6" cols="12" sm="4" lg="4" v-for="topic in topics" :key="topic.id"> 
+     
   <v-skeleton-loader
             class="mx-auto"
             max-width="600"
             type="card"
+            
           >
+
             <v-card
                 
                 width="400"
                 elevation="2"
                 shaped
+                
             >
                 <v-list-item three-line>
                 <v-list-item-content>
                     <div class="overline mb-4">
-                    {{ subject.type }}
+                    {{ topic.type }}
                     </div>
                     <v-list-item-title class="headline mb-1">
-                    {{ subject.content }}
+                    {{ topic.content }}
                     </v-list-item-title>
-                    <v-list-item-subtitle>{{ subject.desc }} </v-list-item-subtitle>
+                    <v-list-item-subtitle>{{ topic.desc }} </v-list-item-subtitle>
                 </v-list-item-content>
 
                 <v-list-item-avatar
                     tile
                     size="80"
-                    color="grey"
-                ></v-list-item-avatar>
+                    
+                >
+                <img :src="topic.photo" alt="">
+                </v-list-item-avatar>
                 </v-list-item>
 
                 <v-card-actions>
@@ -34,21 +42,110 @@
                     outlined
                     rounded
                     text
+                    @click="showInfo(topic)"
                 >
-                    Button
+                    Info
                 </v-btn>
                 </v-card-actions>
             </v-card>
     </v-skeleton-loader>
-    </v-flex>
+
+    </v-col>
+
+    <BottomSheets v-if="sheet == true" :sheet="{sheet, subject}"  @closeBottomSheets="sheet = $event" />
+    
+        
+    
+    <v-btn
+   class="animate__animated animate__bounce" 
+  elevation="6"
+  x-large
+  color="red"
+  fab
+  fixed
+  bottom
+  right
+  dark
+  @click="snackbar = true"
+><v-icon>mdi-delete</v-icon></v-btn>
+
+
+<!-- Snack Bar -->
+
+<div class="text-center ma-2">
+    <v-snackbar
+      v-model="snackbar"
+    >
+      {{ text }}
+      {{ id }} ?
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="deleteSubject"
+        >
+          Excluir
+        </v-btn>
+      </template>
+    </v-snackbar>
+  </div>
+    </v-row>
+    
+
 </template>
 
 <script>
-export default {
-    props: ['subject'],
+import {FirebaseActions} from '../utils/FirebaseActions';
+import BottomSheets from './BottomSheets.vue';
 
-    created() {
-        console.log(this.subject.content);
+export default {
+    props: ['id'], // Subject
+    components: { BottomSheets },
+    watch: {
+        $route() {
+            if (this.topics.length > 0){
+                this.$store.dispatch('unbindTopics');
+            }
+            this.$store.dispatch('bindTopics', {filter: this.id, limit: 10})
+            this.subject = {id: this.id}
+        }
+    },
+    data() {
+        return {
+            snackbar: false,
+            text: `Tem certeza que deseja excluir `,
+            sheet: false,
+            subject: {id: this.id}
+        }
+    },
+    computed: {
+        topics() {
+            return this.$store.state.topics;
+        }  
+    },
+    mounted() {
+        this.$store.dispatch('bindTopics', {filter: this.id, limit: 100}) // Filter only subject (id) topics
+    },
+    methods: {
+        deleteSubject() {
+
+            FirebaseActions.deleteSubject(this.id).then(() => {
+                this.snackbar = false;
+            }).catch((error) => {
+                console.log(error);
+            })
+        },
+        showInfo(topic) {
+            this.sheet = true;
+            this.subject.topic = topic;
+
+        }
+    },
+    beforeDestroy() {
+    this.$store.dispatch('unbindTopics');
+
     }
 }
 </script>

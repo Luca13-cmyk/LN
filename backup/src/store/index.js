@@ -10,7 +10,9 @@ export default new Vuex.Store({
     users: [],
     userBind: [],
     userAuth: [],
-    subjects: []
+    subjects: [],
+    topics: [],
+    links: []
   },
   mutations: {
     ...vuexfireMutations,
@@ -25,13 +27,32 @@ export default new Vuex.Store({
     bindUser: firestoreAction((context) => {
       return context.bindFirestoreRef('userBind', db.collection('users').doc(context.state.userAuth.user.email))
     }), 
-    bindSubjects: firestoreAction((context, payload) => {
-      console.log(payload.filter);
-      return context.bindFirestoreRef('subjects', db.collection('users')
-      .doc(context.state.userAuth.user.email)
-      .collection("subjects")
-      .where("type", "==", payload.filter).limit(payload.limit))
+    bindSubjects: firestoreAction((context) => {
+
+        return context.bindFirestoreRef('subjects', db.collection('users')
+        .doc(context.state.userAuth.user.email)
+        .collection("subjects")
+        );
     }),
+    unbindSubjects: firestoreAction(({ unbindFirestoreRef }) => {
+      unbindFirestoreRef('subjects');
+    }),
+    bindTopics: firestoreAction((context, payload) => {
+      return context.bindFirestoreRef('topics', db.collection('users')
+        .doc(context.state.userAuth.user.email)
+        .collection("subjects").doc(payload.filter).collection('topics').limit(payload.limit));
+    }),
+    unbindTopics: firestoreAction(({ unbindFirestoreRef }) => {
+      unbindFirestoreRef('topics');
+    }),
+    bindLinks: firestoreAction((context) => {
+      return context.bindFirestoreRef('links', db.collection('users')
+        .doc(context.state.userAuth.user.email)
+        .collection("links"));
+    }),
+    unbindLinks: firestoreAction(({ unbindFirestoreRef }) => {
+      unbindFirestoreRef('links');
+    }), 
   },
   
 })

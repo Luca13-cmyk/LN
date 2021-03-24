@@ -15,10 +15,7 @@ import firebase from 'firebase'
 
    })
   .firestore()
-  // firebase.analytics();
-
-// Export types that exists in Firestore
-// This is not always necessary, but it's used in other examples
+  firebase.analytics();
 
 export { firebase, db }
 

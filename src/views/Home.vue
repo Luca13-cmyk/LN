@@ -1,20 +1,12 @@
 <template>
   <v-layout row wrap>
-      
-      <!-- <Subject v-for="topic in topics" :key="topic.id" :topic="topic" /> -->
-      
-        <Chart v-if="2 > 3" />
-          
-
-          
+          <!-- GRAPH -->
           <v-card
     class="mx-auto text-center"
     color="white"
     min-width="100%"
           >
             <v-card-text>
-              
-
               
               <v-sheet>
 
@@ -37,7 +29,8 @@
               </v-sheet>
             </v-card-text>
         </v-card>
-
+        <!-- ./GRAPH -->
+<!-- BTN RELOAD GRAPH -->
     <v-btn
    class="animate__animated animate__bounce" 
   elevation="6"
@@ -50,7 +43,7 @@
   dark
   @click="graphData"
 ><v-icon>mdi-reload</v-icon></v-btn>
-
+<!-- ./BTN RELOAD -->
   <v-sheet
     class="mx-auto mt-6 ml-3"
     min-width="90%"
@@ -78,69 +71,15 @@
     </v-slide-group>
   </v-sheet>
 
-        
-        <v-item-group>
-    <v-container>
-      <v-row>
-        <v-col
-          cols="12"
-        >
-        <!-- V for in v-col -->
-          <v-item>
-            <v-card
-    class="mx-auto mt-6"
-    max-width="400"
-    elevation="5"
-  >
-    <v-img
-      class="white--text align-end"
-      height="200px"
-      src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-    >
-      <v-card-title>aaasa</v-card-title>
-    </v-img>
-
-    <v-card-subtitle class="pb-0">
-      Number 10
-    </v-card-subtitle>
-
-    <v-card-text class="text--primary">
-      <div>Whitehaven Beach</div>
-
-      <div>Whitsunday Island, Whitsunday Islands</div>
-    </v-card-text>
-
-    <v-card-actions>
-      <v-btn
-        color="orange"
-        text
-      >
-        Share
-      </v-btn>
-
-      <v-btn
-        color="orange"
-        text
-      >
-        Explore
-      </v-btn>
-    </v-card-actions>
-  </v-card>
-          </v-item>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-item-group>
-      
+        <Links   v-for="link in bindLinks" :key="link.id" :link="link" />
       
   </v-layout>
 </template>
 
 <script>
-import Chart from './Chart.vue';
-import {db} from '@/firebase.js';
+import Links from '../components/Links.vue';
+import { FirebaseActions } from '../utils/FirebaseActions';
 
-// import Subject from '../components/Subject.vue';
 const gradients = [
     ['#222'],
     ['#42b3f4'],
@@ -150,7 +89,7 @@ const gradients = [
     ['#f72047', '#ffd200', '#1feaea'],
   ]
   export default {
-    components: { Chart},
+  components: { Links },
     data: () => ({
       width: 2,
       radius: 10,
@@ -159,12 +98,9 @@ const gradients = [
       gradient: gradients[5],
        labels: [
         'A',
-        'C',
-        'F'
+        'L',
       ],
-      value: [
-        
-      ],
+      value: [],
       gradientDirection: 'top',
       gradients,
       fill: false,
@@ -173,23 +109,30 @@ const gradients = [
     }),
     computed: {
       bindData() {
-        // console.log(this.$store.state.subjects.length);
-        // sessionStorage.graphData = [this.$store.state.subjects.length, 4, 5];
         return [{type: 'Assuntos (A)', size: this.$store.state.subjects.length}, 
-          {type: 'Contatos (C)', size: 50}, 
+          {type: 'Links (L)', size: this.$store.state.links.length}, 
           {type: 'Favoritos (F)', size: 12}];
+      },
+      bindLinks() {
+        return this.$store.state.links;
       }
     },
     methods: {
       graphData() {
-        db.collection("users").doc('lucanegresco@gmail.com').collection("subjects").get().then((querySnapshot) => {
+        FirebaseActions.getCollectionUserAuth("subjects")
+          .get().then((querySnapshot) => {
           console.log(querySnapshot.size);
-          this.value = [querySnapshot.size, 50, 12]; // Refatorar
-        })
+          this.value.push(querySnapshot.size); 
+        });
+        FirebaseActions.getCollectionUserAuth("links")
+          .get().then((querySnapshot) => {
+          console.log(querySnapshot.size);
+          this.value.push(querySnapshot.size); 
+        });
       },
       getDatas  () {
-      // this.$store.dispatch("bindTopics", {filter: 'linux', limit: 4});
         this.$store.dispatch("bindSubjects");
+        this.$store.dispatch("bindLinks");
       },
 
     },
@@ -198,12 +141,10 @@ const gradients = [
     this.getDatas();
     this.graphData();
   },
-  // methods: {
-  //   getDatas  () {
-  //     // this.$store.dispatch("bindTopics", {filter: 'linux', limit: 4});
-  //     this.$store.dispatch("bindSubjects");
-  //   },
-  // }
+  beforeDestroy (){
+    this.$store.dispatch('unbindSubjects');
+    this.$store.dispatch('unbindLinks');
+  },
 }
 </script>
 
