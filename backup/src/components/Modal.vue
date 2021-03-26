@@ -18,12 +18,12 @@
       </template>
       <v-card>
         <v-card-title>
-          <!-- <span class="headline">Adicionar</span> -->
               <v-tabs class="mt-5">
                   <v-tab @click="type = 'Subject'">Assunto</v-tab>
                   <v-tab @click="type = 'Topic'">Topico</v-tab>
                   <v-tab @click="type = 'Contact'">Amigo</v-tab>
                   <v-tab @click="type = 'Link'">Link</v-tab>
+                  <v-tab @click="type = 'toDo'">Lembretes</v-tab>
               </v-tabs>
         </v-card-title>
         <v-card-text>
@@ -90,7 +90,7 @@
 
             <!-- ######### FRIEND ############ -->
 
-            <!-- ######### LINKS ############ -->
+            <!-- ######### LINK ############ -->
             <v-row v-if="type == 'Link'">
               
             <v-col cols="12" md="4">
@@ -121,6 +121,31 @@
               </v-text-field>
             </v-col>
             
+            </v-row>
+
+            <!-- ###################### ToDo ###########-->
+            <v-row v-if="type == 'toDo'">
+              <v-col cols="12" md="4">
+              <v-text-field
+              v-model="values.toDo.title"
+              label="Título"
+              required
+              >  
+              </v-text-field>
+            </v-col>
+                <v-col
+              cols="12"
+              >
+              <v-textarea required v-model="values.toDo.desc" label="Descrição">
+
+              </v-textarea>
+              <!-- <v-text-field
+                style="white-space: pre;"
+                v-model="values.toDo.desc"
+                label="Descrição"
+                required
+              ></v-text-field> -->
+            </v-col>
             </v-row>
 
           </v-container>
@@ -158,7 +183,7 @@ import { FirebaseActions } from '../utils/FirebaseActions';
     data: () => ({
       dialog: false,
       type: 'Subject',
-      values: { topic: {}, link: {} },
+      values: { topic: {}, link: {}, toDo: {} },
     }),
     methods: {
       saveData() {
@@ -179,6 +204,10 @@ import { FirebaseActions } from '../utils/FirebaseActions';
               desc: this.values.topic.desc,
               photo: this.values.topic.photo,
               type: this.values.topic.type
+              }).then(() => {
+                console.log("add");
+              }).catch(error => {
+                console.log(error);
               });
             break;
           case 'Contact':
@@ -189,6 +218,13 @@ import { FirebaseActions } from '../utils/FirebaseActions';
               desc: this.values.link.desc,
               linkURL: this.values.link.linkURL,
               name: this.values.link.name
+            });
+            break;
+          case 'toDo':
+            FirebaseActions.addTodo(this.values.toDo).then(() => {
+              console.log('adicionado ToDo');
+            }).catch((error) => {
+              console.log(error);
             });
             break;
           default:

@@ -99,11 +99,12 @@ const gradients = [
        labels: [
         'A',
         'L',
+        'LB'
       ],
       value: [],
       gradientDirection: 'top',
       gradients,
-      fill: false,
+      fill: true,
       type: 'trend',
       autoLineWidth: false,
     }),
@@ -111,20 +112,27 @@ const gradients = [
       bindData() {
         return [{type: 'Assuntos (A)', size: this.$store.state.subjects.length}, 
           {type: 'Links (L)', size: this.$store.state.links.length}, 
-          {type: 'Favoritos (F)', size: 12}];
+          {type: 'Lembretes (LB)', size: this.$store.state.toDo.length}];
       },
       bindLinks() {
         return this.$store.state.links;
-      }
+      },
     },
     methods: {
       graphData() {
+        this.value = [];
         FirebaseActions.getCollectionUserAuth("subjects")
+          .get().then((querySnapshot) => {
+          console.log(querySnapshot.size);
+
+          this.value.push(querySnapshot.size); 
+        });
+        FirebaseActions.getCollectionUserAuth("links")
           .get().then((querySnapshot) => {
           console.log(querySnapshot.size);
           this.value.push(querySnapshot.size); 
         });
-        FirebaseActions.getCollectionUserAuth("links")
+        FirebaseActions.getCollectionUserAuth("ToDo")
           .get().then((querySnapshot) => {
           console.log(querySnapshot.size);
           this.value.push(querySnapshot.size); 
@@ -133,6 +141,7 @@ const gradients = [
       getDatas  () {
         this.$store.dispatch("bindSubjects");
         this.$store.dispatch("bindLinks");
+        this.$store.dispatch("bindTodo");
       },
 
     },
@@ -144,6 +153,8 @@ const gradients = [
   beforeDestroy (){
     this.$store.dispatch('unbindSubjects');
     this.$store.dispatch('unbindLinks');
+    this.$store.dispatch('unbindTodo');
+
   },
 }
 </script>

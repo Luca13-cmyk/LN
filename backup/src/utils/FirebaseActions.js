@@ -20,8 +20,6 @@ export class FirebaseActions {
     static deleteSubject(id) {
 
         return new Promise((resolve, reject) => {
-            
-            console.log(store.state.userAuth.user.email);
             FirebaseActions.getSubjectUserAuth(id)
             .delete().then(() => {
                 resolve();
@@ -44,5 +42,56 @@ export class FirebaseActions {
                 reject(error);
             });
         })
+    }
+    static deleteTopic(subjectId, id) {
+        return new Promise((resolve, reject) => {
+            FirebaseActions.getSubjectUserAuth(subjectId).collection("topics").doc(id).delete().then(() => {
+                resolve();
+            }).catch((error) => {
+                reject(error);
+            })
+        })
+    }
+    static updateLink(data) {
+        return new Promise((resolve, reject) => {
+            FirebaseActions.getCollectionUserAuth("links").doc(data.id).update({
+                desc: data.desc,
+                linkURL: data.linkURL,
+                name: data.name
+            }).then(() => {
+                resolve();
+            }).catch((error) => {
+                reject(error);
+            })
+        })
+    }
+    static addTodo(data) {
+        return new Promise((resolve, reject) => {
+            FirebaseActions.getCollectionUserAuth("ToDo").add({
+                desc: data.desc,
+                title: data.title,
+                timeStamp: Date.now()
+            }).then(() => {
+                resolve();
+            }).catch((error) =>{
+                reject(error);
+            })
+        })
+    }
+    static updateTodo(data) {
+        return new Promise((resolve, reject) => {
+            FirebaseActions.getCollectionUserAuth("ToDo").doc(data.id).update({
+                desc: data.desc,
+                title: data.title,
+                timeStamp: Date.now()
+            }).then(() => {
+                resolve();
+            }).catch((error) => {
+                reject(error);
+            })
+        })
+    }
+    static deleteTodo(id) {
+        FirebaseActions.getCollectionUserAuth("ToDo").doc(id).delete();
     }
 }

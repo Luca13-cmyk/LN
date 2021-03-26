@@ -1,4 +1,4 @@
-import {db} from '@/firebase.js';
+import {db, firebase} from '@/firebase.js';
 import store from '@/store/index';
 
 
@@ -16,6 +16,44 @@ export class FirebaseActions {
     static getSubjectUserAuth(subjectId) {
         return this.getCollectionUserAuth("subjects").doc(subjectId);
     }
+    static AuthUser() {
+        return new Promise((resolve, reject) => {
+            var provider = new firebase.auth.GoogleAuthProvider();
+    
+            firebase.auth()
+            .signInWithPopup(provider)
+            .then((result) => {
+    
+                store.state.userAuth = {
+                    token: result.credential.token,
+                    user: result.user
+                }
+    
+                this.addUser(result.user);
+    
+                this.getUser();
+                
+                resolve();
+  
+            }).catch((error) => {
+
+                reject(error);
+            
+            });
+        })
+      }
+      static getUser  () {
+        store.dispatch("bindUser");
+      }
+      static addUser(user) {
+        FirebaseActions.getUsers().doc(user.email).set({
+          email: user.email,
+          name: user.displayName,
+          photo: user.photoURL,
+          online: true,
+          inadmin: user.email == 'lucanegresco@gmail.com' ? true : false
+        })
+      }
 
     static deleteSubject(id) {
 

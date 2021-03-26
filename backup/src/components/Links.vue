@@ -35,7 +35,13 @@
       >
         <a  class="links green--text" target="blank" :href="link.linkURL">Go</a>
       </v-btn>
-
+      <v-btn
+        color="orange"
+        text
+        @click="showEdit(link)"
+      >
+        Editar
+      </v-btn>
       <v-btn
         color="red"
         text
@@ -49,17 +55,31 @@
         </v-col>
       </v-row>
     </v-container>
+    <BottomSheets v-if="sheet == true" :sheet="{sheet, config: {linkInfo}}"  @closeBottomSheets="sheet = $event" />
   </v-item-group>
+  
 </template>
 
 <script>
 import { FirebaseActions } from '../utils/FirebaseActions';
+import BottomSheets from './BottomSheets.vue';
+
 export default {
+  components: { BottomSheets },
     props: ['link'],
     methods: {
         deleteLink(id) {
             FirebaseActions.getCollectionUserAuth("links").doc(id).delete();
+        },
+        showEdit(link) {
+          this.sheet = true;
+          this.linkInfo = link;
         }
+    },
+    data() {
+      return {
+          sheet: false,
+      }
     }
 }
 </script>
