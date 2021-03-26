@@ -53,6 +53,19 @@
         </v-list-item>
         <v-list-item
           link
+          to="/to-do"
+        >
+          <v-list-item-icon>
+            <v-icon>mdi-format-list-checks</v-icon>
+          </v-list-item-icon>   
+
+
+          <v-list-item-content>
+            <v-list-item-title>Lembretes</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item
+          link
           to="/subjects"
         >
           <v-list-item-icon>

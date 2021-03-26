@@ -46,13 +46,22 @@
                 >
                     Info
                 </v-btn>
+                <v-btn
+                    outlined
+                    rounded
+                    text
+                    color="red"
+                    @click="deleteTopic(topic.id)"
+                >
+                    Excluir
+                </v-btn>
                 </v-card-actions>
             </v-card>
     </v-skeleton-loader>
 
     </v-col>
 
-    <BottomSheets v-if="sheet == true" :sheet="{sheet, subject}"  @closeBottomSheets="sheet = $event" />
+    <BottomSheets v-if="sheet == true" :sheet="{sheet, config: {subject}}"  @closeBottomSheets="sheet = $event" />
     
         
     
@@ -91,6 +100,8 @@
       </template>
     </v-snackbar>
   </div>
+    <SnackBars />
+
     </v-row>
     
 
@@ -99,10 +110,11 @@
 <script>
 import {FirebaseActions} from '../utils/FirebaseActions';
 import BottomSheets from './BottomSheets.vue';
+import SnackBars from './SnackBars.vue';
 
 export default {
     props: ['id'], // Subject
-    components: { BottomSheets },
+    components: { BottomSheets, SnackBars },
     watch: {
         $route() {
             if (this.topics.length > 0){
@@ -140,7 +152,15 @@ export default {
         showInfo(topic) {
             this.sheet = true;
             this.subject.topic = topic;
-
+        },
+        deleteTopic(id) {
+            FirebaseActions.deleteTopic(this.id, id).then(() => {
+                this.$store.state.snack = true;
+                this.$store.dispatch('initInfo', 'Topico deletado');
+            }).catch((error) => {
+                console.log(error);
+            })
+            
         }
     },
     beforeDestroy() {
