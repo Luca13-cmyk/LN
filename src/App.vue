@@ -10,20 +10,25 @@
 			<v-container>
         <!-- <transition name="slide" mode="out-in"> -->
 				<router-view />
+
+        
         <!-- </transition> -->
 			</v-container>
 		</v-main>
+    <SnackBars />
 	</v-app>
 </template>
 
 <script>
 import Header from './components/Header';
-import Welcome from './components/Welcome.vue';
+import Welcome from './components/Welcome';
+import SnackBars from './components/SnackBars';
 
 export default {
 components: {
         Header,
-        Welcome
+        Welcome,
+        SnackBars
     },
   data() {
     return {

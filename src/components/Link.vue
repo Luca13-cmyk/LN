@@ -69,7 +69,11 @@ export default {
     props: ['link'],
     methods: {
         deleteLink(id) {
-            FirebaseActions.getCollectionUserAuth("links").doc(id).delete();
+            FirebaseActions.deleteLink(id).then(() => {
+              console.log("add link");
+            }).catch((error) => {
+              console.log(error);
+            });
         },
         showEdit(link) {
           this.sheet = true;

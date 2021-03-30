@@ -20,7 +20,7 @@
         <v-card-title>
               <v-tabs class="mt-5">
                   <v-tab @click="type = 'Subject'">Assunto</v-tab>
-                  <v-tab @click="type = 'Topic'">Topico</v-tab>
+                  <v-tab @click="type = 'Topic'">Tópico</v-tab>
                   <v-tab @click="type = 'Contact'">Amigo</v-tab>
                   <v-tab @click="type = 'Link'">Link</v-tab>
                   <v-tab @click="type = 'toDo'">Lembretes</v-tab>
@@ -28,6 +28,14 @@
         </v-card-title>
         <v-card-text>
           <v-container>
+            <v-form
+            ref="form"
+            v-model="valid"
+            lazy-validation
+            class="ma-6"
+            >
+
+            
               <!-- ########## Subject ######### -->
             <v-row v-if="type == 'Subject'">
               <v-col 
@@ -36,7 +44,18 @@
               >
               <v-text-field
               v-model="values.subject"
-              label="Assunto..."
+              :rules="fieldRules"
+              label="Assunto... (*)"
+              required
+              ></v-text-field>
+             </v-col>
+              <v-col 
+              cols="12"
+              >
+              <v-text-field
+              v-model="values.defaultPhotoURL"
+              :rules="fieldRules"
+              label="Foto URL Padrão (*)"
               required
               ></v-text-field>
              </v-col>
@@ -47,48 +66,33 @@
             <v-row v-if="type == 'Topic'">
               <v-col
                 cols="12"
-                md="4"
               >
-          <v-text-field
-            v-model="values.topic.content"
-            label="Comando/Contéudo"
-            required
-          ></v-text-field>
+              <v-textarea :rules="fieldRules" required v-model="values.topic.content" label="Comando/Contéudo (*)">
+          </v-textarea>
         </v-col>
         <v-col
           cols="12"
-          md="4"
         >
-          <v-text-field
-            v-model="values.topic.desc"
-            label="Descrição"
-            required
-          ></v-text-field>
+        <v-textarea :rules="fieldRules" required v-model="values.topic.desc" label="Descrição (*)">
+          </v-textarea>
         </v-col>
+
         <v-col
           cols="12"
-          md="4"
+          md="6"
         >
-          <v-text-field
-            v-model="values.topic.type"
-            label="Tipo de assunto"
-            required
-          ></v-text-field>
-          </v-col>
-          <v-col
-          cols="12"
-          >
-          <v-text-field
-            v-model="values.topic.photo"
-            label="Foto URL"
-            required
-          ></v-text-field>
+        <v-select
+        v-model="values.topic.type"
+        :rules="fieldRules"
+        :items="subjects"
+        label="Assunto... (*)"
+        ></v-select>
           </v-col>
         
 
             </v-row>
 
-            <!-- ######### FRIEND ############ -->
+            <!-- ######### CONTACT ############ -->
 
             <!-- ######### LINK ############ -->
             <v-row v-if="type == 'Link'">
@@ -96,7 +100,8 @@
             <v-col cols="12" md="4">
               <v-text-field
               v-model="values.link.name"
-              label="Nome"
+              :rules="fieldRules"
+              label="Nome (*)"
               required
               >  
               </v-text-field>
@@ -106,7 +111,8 @@
               >
               <v-text-field
                 v-model="values.link.desc"
-                label="Descrição"
+                :rules="fieldRules"
+                label="Descrição (*)"
                 required
               ></v-text-field>
             </v-col>
@@ -115,7 +121,8 @@
             >
               <v-text-field
               v-model="values.link.linkURL"
-              label="Link URL"
+              :rules="fieldRules"
+              label="Link URL (*)"
               required
               >
               </v-text-field>
@@ -128,7 +135,8 @@
               <v-col cols="12" md="4">
               <v-text-field
               v-model="values.toDo.title"
-              label="Título"
+              :rules="fieldRules"
+              label="Título (*)"
               required
               >  
               </v-text-field>
@@ -136,18 +144,11 @@
                 <v-col
               cols="12"
               >
-              <v-textarea required v-model="values.toDo.desc" label="Descrição">
-
+              <v-textarea :rules="fieldRules" required v-model="values.toDo.desc" label="Descrição (*)">
               </v-textarea>
-              <!-- <v-text-field
-                style="white-space: pre;"
-                v-model="values.toDo.desc"
-                label="Descrição"
-                required
-              ></v-text-field> -->
             </v-col>
             </v-row>
-
+            </v-form>
           </v-container>
           <small>*Campos orbrigatorios</small>
         </v-card-text>
@@ -163,6 +164,7 @@
           <v-btn
             color="blue darken-1"
             text
+            :disabled="!valid"
             @click="saveData"
           >
             Salvar
@@ -184,54 +186,65 @@ import { FirebaseActions } from '../utils/FirebaseActions';
       dialog: false,
       type: 'Subject',
       values: { topic: {}, link: {}, toDo: {} },
+      valid: true,
+      fieldRules: [
+        v => v ? !!v.trim() : null || 'Campo é necessário',
+      ],
+      
     }),
+    computed: {
+        subjects() {
+          let subjects = [];
+          this.$store.state.subjects.forEach(item => {
+            subjects.push(item.id);
+          })
+          return subjects;
+        }
+    },
     methods: {
       saveData() {
+        if (!this.$refs.form.validate()) return;
         switch (this.type) {
           case 'Subject':
-            FirebaseActions.getSubjectUserAuth(this.values.subject)
-            .set({
-            timestamp: Date.now()
+            FirebaseActions.addSubject(this.values.subject, this.values.defaultPhotoURL).then(() => {
+              this.$store.dispatch('initInfo', 'Assunto adicionado');
+            }).catch((error) => {
+              this.$store.dispatch('initInfo', error);
             });
             break;
           case 'Topic':
-            
-            FirebaseActions.getSubjectUserAuth(this.values.topic.type)
-              .collection('topics')
-              .add({
-              timestamp: Date.now(),
-              content: this.values.topic.content,
-              desc: this.values.topic.desc,
-              photo: this.values.topic.photo,
-              type: this.values.topic.type
-              }).then(() => {
-                console.log("add");
-              }).catch(error => {
-                console.log(error);
-              });
+            FirebaseActions.addTopic(this.values.topic).then(() => {
+              this.$store.dispatch('initInfo', 'Tópico adicionado');
+            }).catch((error) => {
+              this.$store.dispatch('initInfo', error);
+            });
             break;
           case 'Contact':
             console.log(this.values.contact);
             break;
           case 'Link':
-            FirebaseActions.getCollectionUserAuth("links").add({
-              desc: this.values.link.desc,
-              linkURL: this.values.link.linkURL,
-              name: this.values.link.name
+            FirebaseActions.addLink(this.values.link).then(() => {
+              this.$store.dispatch('initInfo', 'Link adicionado');
+            }).catch((error) => {
+              this.$store.dispatch('initInfo', error);
             });
             break;
           case 'toDo':
             FirebaseActions.addTodo(this.values.toDo).then(() => {
-              console.log('adicionado ToDo');
+              this.$store.dispatch('initInfo', 'Lembrete adicionado');
             }).catch((error) => {
-              console.log(error);
+              this.$store.dispatch('initInfo', error);
             });
             break;
           default:
             break;
         }
       }  
+    },
+    mounted() {
+      this.$store.dispatch("bindSubjects");
     }
+    
   }
 </script>
 

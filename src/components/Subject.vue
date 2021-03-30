@@ -5,15 +5,15 @@
      
   <v-skeleton-loader
             class="mx-auto"
-            max-width="600"
+            max-width="800"
             type="card"
             
           >
 
             <v-card
                 
-                width="400"
-                elevation="2"
+                width="800"
+                elevation="4"
                 shaped
                 
             >
@@ -79,7 +79,7 @@
 ><v-icon>mdi-delete</v-icon></v-btn>
 
 
-<!-- Snack Bar -->
+<!-- Snack Bar confirm delete -->
 
 <div class="text-center ma-2">
     <v-snackbar
@@ -100,7 +100,7 @@
       </template>
     </v-snackbar>
   </div>
-    <SnackBars />
+    
 
     </v-row>
     
@@ -110,11 +110,10 @@
 <script>
 import {FirebaseActions} from '../utils/FirebaseActions';
 import BottomSheets from './BottomSheets.vue';
-import SnackBars from './SnackBars.vue';
 
 export default {
     props: ['id'], // Subject
-    components: { BottomSheets, SnackBars },
+    components: { BottomSheets },
     watch: {
         $route() {
             if (this.topics.length > 0){
@@ -144,9 +143,10 @@ export default {
         deleteSubject() {
 
             FirebaseActions.deleteSubject(this.id).then(() => {
+                this.$store.dispatch('initInfo', 'Assunto deletado');
                 this.snackbar = false;
             }).catch((error) => {
-                console.log(error);
+                this.$store.dispatch('initInfo', error);
             })
         },
         showInfo(topic) {
@@ -155,8 +155,7 @@ export default {
         },
         deleteTopic(id) {
             FirebaseActions.deleteTopic(this.id, id).then(() => {
-                this.$store.state.snack = true;
-                this.$store.dispatch('initInfo', 'Topico deletado');
+                this.$store.dispatch('initInfo', 'Tópico deletado');
             }).catch((error) => {
                 console.log(error);
             })

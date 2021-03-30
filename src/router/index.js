@@ -15,6 +15,7 @@ const routes = [
     path: '/users',
     name: 'Users',
     component: () => import(/* webpackChunkName: "users" */ '../views/Users.vue'),
+    // Validar entrada somente administrador
   },
   {
     path: '/to-do',

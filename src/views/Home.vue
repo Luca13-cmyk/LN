@@ -71,13 +71,13 @@
     </v-slide-group>
   </v-sheet>
 
-        <Links   v-for="link in bindLinks" :key="link.id" :link="link" />
+        <Link   v-for="link in bindLinks" :key="link.id" :link="link" />
       
   </v-layout>
 </template>
 
 <script>
-import Links from '../components/Links.vue';
+import Link from '../components/Link.vue';
 import { FirebaseActions } from '../utils/FirebaseActions';
 
 const gradients = [
@@ -89,7 +89,7 @@ const gradients = [
     ['#f72047', '#ffd200', '#1feaea'],
   ]
   export default {
-  components: { Links },
+  components: { Link },
     data: () => ({
       width: 2,
       radius: 10,
@@ -122,24 +122,19 @@ const gradients = [
       graphData() {
         this.value = [];
         FirebaseActions.getCollectionUserAuth("subjects")
-          .get().then((querySnapshot) => {
-          console.log(querySnapshot.size);
-
-          this.value.push(querySnapshot.size); 
+          .get().then((subjects) => {
+          this.value.push(subjects.size); 
         });
         FirebaseActions.getCollectionUserAuth("links")
-          .get().then((querySnapshot) => {
-          console.log(querySnapshot.size);
-          this.value.push(querySnapshot.size); 
+          .get().then((links) => {
+          this.value.push(links.size); 
         });
         FirebaseActions.getCollectionUserAuth("ToDo")
-          .get().then((querySnapshot) => {
-          console.log(querySnapshot.size);
-          this.value.push(querySnapshot.size); 
+          .get().then((ToDos) => {
+          this.value.push(ToDos.size); 
         });
       },
       getDatas  () {
-        this.$store.dispatch("bindSubjects");
         this.$store.dispatch("bindLinks");
         this.$store.dispatch("bindTodo");
       },
@@ -151,7 +146,6 @@ const gradients = [
     this.graphData();
   },
   beforeDestroy (){
-    this.$store.dispatch('unbindSubjects');
     this.$store.dispatch('unbindLinks');
     this.$store.dispatch('unbindTodo');
 

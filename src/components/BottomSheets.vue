@@ -17,7 +17,6 @@
           Fechar
         </v-btn>
         <div class="py-3" >
-        <!-- {{sheet.config.subject.id}} -->
             
                 <v-form
           ref="form"
@@ -29,21 +28,18 @@
 
         <!-- ####### subject ######## -->
           <div v-if="sheet.config.subject">
-            <v-text-field
-            v-model="sheet.config.subject.topic.content"
-            :rules="contentRules"
-            label="Conteudo"
-            required
-          ></v-text-field>
+          <v-textarea :rules="fieldRules" required v-model="sheet.config.subject.topic.content" label="Contéudo">
+          </v-textarea>
 
           <v-text-field
             v-model="sheet.config.subject.topic.desc"
-            :rules="descRules"
+            :rules="fieldRules"
             label="Descrição"
             required
           ></v-text-field>
           <v-text-field
             v-model="sheet.config.subject.topic.photo"
+            :rules="fieldRules"
             label="FotoURL"
           ></v-text-field>
 
@@ -51,11 +47,10 @@
 
         <!-- ####### LinkInfo ######## -->
           <div v-if="sheet.config.linkInfo">
-            <h1>link {{ sheet.config.linkInfo.id }} </h1>
-            <v-text-field v-model="sheet.config.linkInfo.name" label="Nome" :rules="contentRules" required></v-text-field>
-            <v-text-field v-model="sheet.config.linkInfo.desc" label="Descrição" :rules="contentRules" required>
+            <v-text-field v-model="sheet.config.linkInfo.name" label="Nome" :rules="fieldRules" required></v-text-field>
+            <v-text-field v-model="sheet.config.linkInfo.desc" label="Descrição" :rules="fieldRules" required>
             </v-text-field>
-            <v-text-field  v-model="sheet.config.linkInfo.linkURL" label="Link URL" :rules="linkRules" required></v-text-field>
+            <v-text-field  v-model="sheet.config.linkInfo.linkURL" label="Link URL" :rules="fieldRules" required></v-text-field>
 
 
           </div>
@@ -83,17 +78,15 @@
         </div>
       </v-sheet>
     </v-bottom-sheet>
-    <SnackBars />
+    
   </div>
 </template>
 
 <script>
 import {FirebaseActions} from '../utils/FirebaseActions';
-import SnackBars from './SnackBars.vue';
 
   export default {
       props: ['sheet'],
-      components: {SnackBars},
       methods: {
           closeSheet() {
               
@@ -127,15 +120,8 @@ import SnackBars from './SnackBars.vue';
     data: () => ({
       snackBar: false,
       valid: true,
-      contentRules: [
-        v => !!v || 'Conteudo é necessário',
-        v => (v && v.length <= 50) || 'Muito grande',
-      ],
-      descRules: [
-        v => !!v || 'Descrição é necessário',
-      ],
-      linkRules: [
-        v => !!v || 'Link URL é necessário',
+      fieldRules: [
+        v => v ? !!v.trim() : null || 'Campo é necessário',
       ],
     }),
   

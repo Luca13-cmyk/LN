@@ -2,7 +2,7 @@
   <div class="text-center">
     <v-snackbar
       v-model="snack"
-      :timeout="400000"
+      :timeout="4000"
     >
       {{ text }}
 
@@ -23,9 +23,14 @@
 <script>
   export default {
       computed: {
-          snack() {
+          snack: {
+            get: function() {
 
-            return this.$store.getters.snack;
+              return this.$store.getters.snack
+            },
+            set: function() {
+              this.$store.dispatch("setSnackFalse");
+            }
               
           },
           text() {
@@ -37,18 +42,5 @@
               this.$store.dispatch("setSnackFalse"); 
           }
       },
-      mounted() {
-          this.cl = setInterval(() => {       
-
-              if (this.$store.getters.snack){
-                
-                  this.close();
-              }
-              
-          }, 8000)
-      },
-      destroyed() {
-          clearInterval(this.cl);
-      }
   }
 </script>
