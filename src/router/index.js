@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import store from '@/store/index';
 
 
 Vue.use(VueRouter)
@@ -15,6 +16,14 @@ const routes = [
     path: '/users',
     name: 'Users',
     component: () => import(/* webpackChunkName: "users" */ '../views/Users.vue'),
+    beforeEnter: (to, from, next) => {
+      if(store.state.userAuth.inadmin) {
+        next();
+      }
+      else {
+        next('/');
+      }
+    }
     // Validar entrada somente administrador
   },
   {
@@ -42,6 +51,10 @@ const routes = [
     props: true,
     component: () => import(/* webpackChunkName: "contacts" */ '../views/Contact.vue'),
   },
+  {
+    path: '*',
+    component: () => import("../views/404.vue")
+  }
 ]
 
 const router = new VueRouter({

@@ -5,21 +5,21 @@ export default {
         snack: false
     },
     mutations: {
-        setInfo(state, info) {
+        infoSnack(state, info) {
 
             state.info = info;
             state.snack = true;
         },
-        setSnack(state) {
+        snackFalse(state) {
             state.snack = false;
         }
     },
     actions: {
         initInfo({ commit }, info) {
-            commit('setInfo', info);
+            commit('infoSnack', info);
         },
         setSnackFalse({ commit }) {
-            commit('setSnack');
+            commit('snackFalse');
         }
     },
     getters: {

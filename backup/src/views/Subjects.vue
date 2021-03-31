@@ -19,12 +19,6 @@ export default {
             return this.$store.state.subjects;
         }
     },
-    mounted() {
-      this.$store.dispatch("bindSubjects");
-    },
-    beforeDestroy (){
-    this.$store.dispatch('unbindSubjects');
-  },
 }
 </script>
 

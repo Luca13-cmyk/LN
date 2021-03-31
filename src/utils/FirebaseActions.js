@@ -56,6 +56,7 @@ export class FirebaseActions {
               let inadmin;
               if(doc.exists) {
                   inadmin = true;
+                  store.state.userAuth.inadmin = true;
               } else {
                   inadmin = false;
               }
@@ -68,7 +69,6 @@ export class FirebaseActions {
               });
 
           })
-
         
       }
 
