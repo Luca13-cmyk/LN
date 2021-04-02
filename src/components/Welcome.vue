@@ -192,6 +192,7 @@ span.typed-cursor {
 @media screen and (max-width: 1000px) {
   #version-per {
     /* bottom: 0; */
+    display: none;
     top: 97%;
     left: -50%;
     width: 380px;

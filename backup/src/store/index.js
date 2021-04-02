@@ -1,70 +1,81 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import {vuexfireMutations, firestoreAction} from 'vuexfire';
-import { db } from '@/firebase';
 import info from './modules/info';
+import edit from './modules/edit';
+import {FirebaseActions} from '@/utils/FirebaseActions'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    info
+    info,
+    edit
   },
   state: {
+    login: false,
     users: [],
     userBind: [],
     userAuth: [],
     subjects: [],
     topics: [],
     links: [],
-    toDo: []
+    toDo: [],
+    contacts: []
   },
   mutations: {
     ...vuexfireMutations,
   },
   actions: {
     bindUsers: firestoreAction(context => {
-      return context.bindFirestoreRef('users', db.collection('users'))
+      return context.bindFirestoreRef('users', FirebaseActions.getUsers())
     }),
     unbindUsers:  firestoreAction(({ unbindFirestoreRef }) => {
       unbindFirestoreRef('users');
     }),
     bindUser: firestoreAction((context) => {
-      return context.bindFirestoreRef('userBind', db.collection('users').doc(context.state.userAuth.user.email))
+      return context.bindFirestoreRef('userBind', 
+      FirebaseActions.getUserAuth())
     }), 
     bindSubjects: firestoreAction((context) => {
 
-        return context.bindFirestoreRef('subjects', db.collection('users')
-        .doc(context.state.userAuth.user.email)
-        .collection("subjects")
+        return context.bindFirestoreRef('subjects', 
+          FirebaseActions.getCollectionUserAuth("subjects")
         );
     }),
     unbindSubjects: firestoreAction(({ unbindFirestoreRef }) => {
       unbindFirestoreRef('subjects');
     }),
     bindTopics: firestoreAction((context, payload) => {
-      return context.bindFirestoreRef('topics', db.collection('users')
-        .doc(context.state.userAuth.user.email)
-        .collection("subjects").doc(payload.filter).collection('topics').limit(payload.limit));
+      return context.bindFirestoreRef('topics', 
+      FirebaseActions.getSubjectUserAuth(payload.filter)
+      .collection('topics').limit(payload.limit));
     }),
     unbindTopics: firestoreAction(({ unbindFirestoreRef }) => {
       unbindFirestoreRef('topics');
     }),
     bindLinks: firestoreAction((context) => {
-      return context.bindFirestoreRef('links', db.collection('users')
-        .doc(context.state.userAuth.user.email)
-        .collection("links"));
+      return context.bindFirestoreRef('links', 
+      FirebaseActions.getCollectionUserAuth("links"));
     }),
     unbindLinks: firestoreAction(({ unbindFirestoreRef }) => {
       unbindFirestoreRef('links');
     }),
     bindTodo: firestoreAction((context) => {
-      return context.bindFirestoreRef('toDo', db.collection('users')
-        .doc(context.state.userAuth.user.email)
-        .collection("ToDo").orderBy("timeStamp", "desc"));
+      return context.bindFirestoreRef('toDo', 
+      FirebaseActions.getCollectionUserAuth("ToDo")
+        .orderBy("timeStamp", "desc"));
     }),
     unbindTodo: firestoreAction(({ unbindFirestoreRef }) => {
       unbindFirestoreRef('toDo');
+    }),
+    bindContacts: firestoreAction((context) => {
+      return context.bindFirestoreRef('contacts', 
+      FirebaseActions.getCollectionUserAuth("contacts")
+        .orderBy("name", "desc"));
+    }),
+    unbindContacts: firestoreAction(({ unbindFirestoreRef }) => {
+      unbindFirestoreRef('contacts');
     }), 
   },
   

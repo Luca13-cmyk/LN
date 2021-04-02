@@ -9,30 +9,35 @@
         <router-view />
       </v-container>
     </v-main>
-    <SnackBars />
+    <SnackBar />
+    <BottomSheet />
   </v-app>
 </template>
 
 <script>
 import Header from "./components/Header";
 import Welcome from "./components/Welcome";
-import SnackBars from "./components/SnackBars";
+import SnackBar from "./components/modules/SnackBar";
+import BottomSheet from "./components/modules/BottomSheet";
 
 export default {
   components: {
     Header,
     Welcome,
-    SnackBars,
+    SnackBar,
+    BottomSheet,
   },
   data() {
     return {
-      login: false,
       drawerRight: null,
     };
   },
   computed: {
     user() {
       return this.$store.state.userBind;
+    },
+    login() {
+      return this.$store.state.login;
     },
   },
 };

@@ -2,7 +2,7 @@
   <div>
     <v-tabs class="mt-5">
       <v-tab
-        :to="{ name: 'Subject', params: { id: subject.id } }"
+        :to="{ name: 'Subject', params: { id: subject.id, subject } }"
         v-for="subject in subjects"
         :key="subject.id"
         >{{ subject.id }}</v-tab

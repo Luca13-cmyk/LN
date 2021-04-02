@@ -1,7 +1,10 @@
 <template>
-  <v-layout row wrap>
-    <User v-for="user in users" :key="user.id" :user="user"/>
-  </v-layout>
+  <div>
+    <v-row align="center" justify="center" class="mt-3">
+        <User  v-for="user in users" :key="user.id" :user="user"/>
+    </v-row>
+      
+  </div>
 </template>
 
 <script>

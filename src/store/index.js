@@ -2,22 +2,26 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import {vuexfireMutations, firestoreAction} from 'vuexfire';
 import info from './modules/info';
+import edit from './modules/edit';
 import {FirebaseActions} from '@/utils/FirebaseActions'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    info
+    info,
+    edit
   },
   state: {
+    login: false,
     users: [],
     userBind: [],
     userAuth: [],
     subjects: [],
     topics: [],
     links: [],
-    toDo: []
+    toDo: [],
+    contacts: []
   },
   mutations: {
     ...vuexfireMutations,
@@ -64,6 +68,14 @@ export default new Vuex.Store({
     }),
     unbindTodo: firestoreAction(({ unbindFirestoreRef }) => {
       unbindFirestoreRef('toDo');
+    }),
+    bindContacts: firestoreAction((context) => {
+      return context.bindFirestoreRef('contacts', 
+      FirebaseActions.getCollectionUserAuth("contacts")
+        .orderBy("name", "desc"));
+    }),
+    unbindContacts: firestoreAction(({ unbindFirestoreRef }) => {
+      unbindFirestoreRef('contacts');
     }), 
   },
   
