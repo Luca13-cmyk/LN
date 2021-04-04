@@ -1,5 +1,14 @@
 <template>
   <v-col align="center" cols="12" sm="12" lg="12">
+    <v-col cols="12" lg="4" sm="7">
+      <v-text-field
+        append-outer-icon="mdi-card-search-outline"
+        v-model="filterTopicField"
+        @click:append-outer="filterTopic"
+        label="Filtrar conteúdo..."
+      ></v-text-field>
+    </v-col>
+
     <v-skeleton-loader
       v-for="topic in topics"
       :key="topic.id"
@@ -40,6 +49,7 @@
         </v-card-actions>
       </v-card>
     </v-skeleton-loader>
+    <v-btn class="mt-6" @click="loadPlus" elevation="6">Carregar +</v-btn>
   </v-col>
 </template>
 
@@ -52,7 +62,10 @@ export default {
       if (this.topics.length > 0) {
         this.$store.dispatch("unbindTopics");
       }
-      this.$store.dispatch("bindTopics", { filter: this.id, limit: 100 });
+      this.$store.dispatch("bindTopics", {
+        filter: this.id,
+        limit: this.limit,
+      });
     },
   },
   computed: {
@@ -60,9 +73,32 @@ export default {
       return this.$store.state.topics;
     },
   },
+  data() {
+    return {
+      limit: 10,
+      filterTopicField: "",
+    };
+  },
   methods: {
     showInfoTopic(topic) {
       this.$store.dispatch("initEdit", { id: this.id, topic, type: "topic" });
+    },
+    filterTopic() {
+      this.$store.dispatch("unbindTopics");
+      this.$store.dispatch("bindTopics", {
+        filter: this.id,
+        limit: this.limit,
+        topic: this.filterTopicField,
+      });
+    },
+    loadPlus() {
+      this.$store.dispatch("unbindTopics");
+      this.limit += 10;
+      this.$store.dispatch("bindTopics", {
+        filter: this.id,
+        topic: this.filterTopicField,
+        limit: this.limit,
+      });
     },
     deleteTopic(id) {
       FirebaseActions.deleteTopic(this.id, id)
@@ -75,7 +111,7 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch("bindTopics", { filter: this.id, limit: 100 }); // Filter only subject (id) topics
+    this.$store.dispatch("bindTopics", { filter: this.id, limit: this.limit }); // Filter only subject (id) topics
   },
   beforeDestroy() {
     this.$store.dispatch("unbindTopics");

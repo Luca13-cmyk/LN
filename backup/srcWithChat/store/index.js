@@ -14,18 +14,25 @@ export default new Vuex.Store({
   },
   state: {
     login: sessionStorage.login ? true : false,
-
+    // users: [],
     userBind: [],
     userAuth: sessionStorage.auth ? JSON.parse(sessionStorage.auth) : [],
     subjects: [],
     topics: [],
     links: [],
     toDo: [],
+    // contacts: [],
   },
   mutations: {
     ...vuexfireMutations,
   },
   actions: {
+    // bindUsers: firestoreAction((context) => {
+    //   return context.bindFirestoreRef("users", FirebaseActions.getUsers());
+    // }),
+    // unbindUsers: firestoreAction(({ unbindFirestoreRef }) => {
+    //   unbindFirestoreRef("users");
+    // }),
     bindUser: firestoreAction((context) => {
       return context.bindFirestoreRef(
         "userBind",
@@ -74,5 +81,16 @@ export default new Vuex.Store({
     unbindTodo: firestoreAction(({ unbindFirestoreRef }) => {
       unbindFirestoreRef("toDo");
     }),
+    // bindContacts: firestoreAction((context) => {
+    //   return context.bindFirestoreRef(
+    //     "contacts",
+    //     FirebaseActions.getContactsOfUserAuth()
+    //       .collection("users")
+    //       .orderBy("name", "desc")
+    //   );
+    // }),
+    // unbindContacts: firestoreAction(({ unbindFirestoreRef }) => {
+    //   unbindFirestoreRef("contacts");
+    // }),
   },
 });

@@ -1,13 +1,12 @@
 <template>
   <div class="text-center">
-    <v-bottom-sheet v-model="bottomSheet" persistent>
-      <v-sheet class="text-center" height="500px">
+    <v-bottom-sheet id="bottomsheet" v-model="bottomSheet" persistent>
+      <v-sheet class="text-center" height="600px">
         <v-btn class="mt-6" text color="error" @click="close">
           Fechar
         </v-btn>
         <div class="py-3">
           <v-form ref="form" v-model="valid" lazy-validation class="ma-6">
-            <!-- <h1>{{ dataSheet }}</h1> -->
             <div v-if="dataSheet.type == 'link'">
               <v-text-field
                 v-model="dataSheet.name"
@@ -37,13 +36,13 @@
                 label="Contéudo"
               >
               </v-textarea>
-
-              <v-text-field
+              <v-textarea
                 v-model="dataSheet.topic.desc"
                 :rules="fieldRules"
                 label="Descrição"
                 required
-              ></v-text-field>
+              >
+              </v-textarea>
               <v-text-field
                 v-model="dataSheet.topic.photo"
                 :rules="fieldRules"
@@ -143,3 +142,8 @@ export default {
   }),
 };
 </script>
+<style scoped>
+#bottomsheet {
+  overflow-y: auto;
+}
+</style>

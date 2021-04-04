@@ -1,12 +1,12 @@
 <template>
   <div>
-    <v-navigation-drawer app v-model="drawer" fixed temporary>
+    <v-navigation-drawer app v-model="drawer" fixed>
       <v-list-item>
         <v-list-item-avatar>
           <v-badge
             bordered
             bottom
-            :color="online"
+            color="green"
             dot
             offset-x="11"
             offset-y="11"
@@ -19,6 +19,7 @@
 
         <v-list-item-content>
           <v-list-item-title>{{ user.name }}</v-list-item-title>
+          <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-divider></v-divider>
@@ -33,7 +34,7 @@
             <v-list-item-title>Home</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item v-if="user.inadmin" link to="/users">
+        <!-- <v-list-item v-if="user.inadmin" link to="/users">
           <v-list-item-icon>
             <v-icon>mdi-account-box-multiple-outline</v-icon>
           </v-list-item-icon>
@@ -41,7 +42,7 @@
           <v-list-item-content>
             <v-list-item-title>Usuários</v-list-item-title>
           </v-list-item-content>
-        </v-list-item>
+        </v-list-item> -->
         <v-list-item link to="/to-do">
           <v-list-item-icon>
             <v-icon>mdi-format-list-checks</v-icon>
@@ -95,20 +96,19 @@
       app
       min-width="300"
     >
-      <Contacts />
+      <!-- <Contacts /> -->
     </v-navigation-drawer>
   </div>
 </template>
 
 <script>
 import Modal from "./Modal.vue";
-import Contacts from "./Contacts.vue";
+// import Contacts from "./Contacts.vue";
 
 export default {
-  props: ["user"],
   components: {
     Modal,
-    Contacts,
+    // Contacts,
   },
   data() {
     return {
@@ -117,8 +117,16 @@ export default {
     };
   },
   computed: {
-    online() {
-      return this.user.online ? "green accent-4" : "deep-purple accent-4";
+    user() {
+      return this.$store.state.userBind;
+    },
+  },
+  mounted() {
+    this.getUser();
+  },
+  methods: {
+    getUser() {
+      this.$store.dispatch("bindUser");
     },
   },
 };

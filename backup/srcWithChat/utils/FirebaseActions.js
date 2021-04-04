@@ -17,6 +17,12 @@ export class FirebaseActions {
   static getAdmins() {
     return db.collection("admins");
   }
+  static getContacts() {
+    return db.collection("contacts");
+  }
+  static getContactsOfUserAuth() {
+    return db.collection("contacts").doc(store.state.userAuth.user.email);
+  }
   static AuthUser() {
     return new Promise((resolve, reject) => {
       var provider = new firebase.auth.GoogleAuthProvider();
@@ -32,7 +38,7 @@ export class FirebaseActions {
 
           this.addUser(result.user);
 
-          this.getUser();
+          sessionStorage.login = true;
 
           store.state.login = true;
 
@@ -46,42 +52,40 @@ export class FirebaseActions {
 
   static signOutUser() {
     return new Promise((resolve, reject) => {
-      FirebaseActions.getCollectionUserAuth("contacts")
-        .get()
-        .then((contacts) => {
-          contacts.forEach((contact) => {
-            if (contact.exists) {
-              let email = contact.data().email;
+      //   FirebaseActions.getContactsOfUserAuth()
+      //     .collection("users")
+      //     .get()
+      //     .then((contacts) => {
+      //       contacts.forEach((contact) => {
+      //         if (contact.exists) {
+      //           FirebaseActions.getContacts()
+      //             .doc(contact.id)
+      //             .collection("users")
+      //             .doc(store.state.userAuth.user.email)
+      //             .set(
+      //               {
+      //                 online: false,
+      //               },
+      //               {
+      //                 merge: true,
+      //               }
+      //             );
+      //         }
+      //       });
 
-              FirebaseActions.getUsers()
-                .doc(email)
-                .collection("contacts")
-                .doc(store.state.userAuth.user.email)
-                .set(
-                  {
-                    online: false,
-                  },
-                  {
-                    merge: true,
-                  }
-                );
-            }
-          });
-          firebase
-            .auth()
-            .signOut()
-            .then(() => {
-              store.state.login = false;
-              resolve();
-            })
-            .catch((error) => {
-              reject(error);
-            });
+      // });
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          sessionStorage.clear();
+          store.state.login = false;
+          resolve();
+        })
+        .catch((error) => {
+          reject(error);
         });
     });
-  }
-  static getUser() {
-    store.dispatch("bindUser");
   }
   static addUser(user) {
     FirebaseActions.getAdmins()
@@ -92,6 +96,7 @@ export class FirebaseActions {
         if (doc.exists) {
           inadmin = true;
           store.state.userAuth.inadmin = true;
+          sessionStorage.auth = JSON.stringify({ user, inadmin: true });
         } else {
           inadmin = false;
         }
@@ -102,31 +107,31 @@ export class FirebaseActions {
           inadmin,
           online: true,
         });
-        FirebaseActions.getCollectionUserAuth("contacts")
-          .get()
-          .then((contacts) => {
-            contacts.forEach((contact) => {
-              if (contact.exists) {
-                let email = contact.data().email;
-
-                FirebaseActions.getUsers()
-                  .doc(email)
-                  .collection("contacts")
-                  .doc(user.email)
-                  .set(
-                    {
-                      email: user.email,
-                      name: user.displayName,
-                      photo: user.photoURL,
-                      online: true,
-                    },
-                    {
-                      merge: true,
-                    }
-                  );
-              }
-            });
-          });
+        // FirebaseActions.getContactsOfUserAuth()
+        //   .collection("users")
+        //   .get()
+        //   .then((contacts) => {
+        //     contacts.forEach((contact) => {
+        //       if (contact.exists) {
+        //         console.log(contact.id);
+        //         FirebaseActions.getContacts()
+        //           .doc(contact.id)
+        //           .collection("users")
+        //           .doc(user.email)
+        //           .set(
+        //             {
+        //               email: user.email,
+        //               name: user.displayName,
+        //               photo: user.photoURL,
+        //               online: true,
+        //             },
+        //             {
+        //               merge: true,
+        //             }
+        //           );
+        //       }
+        //     });
+        //   });
       });
   }
 

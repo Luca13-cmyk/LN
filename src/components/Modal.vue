@@ -2,7 +2,7 @@
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent max-width="600px">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="black" dark v-bind="attrs" v-on="on">
+        <v-btn color="primary" v-bind="attrs" v-on="on">
           Adicionar
         </v-btn>
       </template>
@@ -11,7 +11,6 @@
           <v-tabs class="mt-5">
             <v-tab @click="type = 'Subject'">Assunto</v-tab>
             <v-tab @click="type = 'Topic'">Tópico</v-tab>
-            <v-tab @click="type = 'Contact'">Amigo</v-tab>
             <v-tab @click="type = 'Link'">Link</v-tab>
             <v-tab @click="type = 'toDo'">Lembretes</v-tab>
           </v-tabs>
@@ -46,7 +45,7 @@
                   <v-textarea
                     :rules="fieldRules"
                     required
-                    v-model="values.topic.content"
+                    v-model.trim="values.topic.content"
                     label="Comando/Contéudo (*)"
                   >
                   </v-textarea>
@@ -70,8 +69,6 @@
                   ></v-select>
                 </v-col>
               </v-row>
-
-              <!-- ######### CONTACT ############ -->
 
               <!-- ######### LINK ############ -->
               <v-row v-if="type == 'Link'">
@@ -200,9 +197,6 @@ export default {
             .catch((error) => {
               this.$store.dispatch("initInfo", error);
             });
-          break;
-        case "Contact":
-          console.log(this.values.contact);
           break;
         case "Link":
           FirebaseActions.addLink(this.values.link)

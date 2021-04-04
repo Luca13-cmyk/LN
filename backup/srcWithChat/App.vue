@@ -2,7 +2,7 @@
   <v-app>
     <Welcome v-if="!login" @userAuth="login = $event" />
 
-    <Header v-if="login" :user="user" />
+    <Header v-if="login" />
 
     <v-main v-if="login">
       <v-container>
@@ -33,9 +33,6 @@ export default {
     };
   },
   computed: {
-    user() {
-      return this.$store.state.userBind;
-    },
     login() {
       return this.$store.state.login;
     },

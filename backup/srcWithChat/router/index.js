@@ -12,6 +12,20 @@ const routes = [
     name: "Home",
     component: Home,
   },
+  // {
+  //   path: '/users',
+  //   name: 'Users',
+  //   component: () => import(/* webpackChunkName: "users" */ '../views/Users.vue'),
+  //   beforeEnter: (to, from, next) => {
+  //     if(store.state.userAuth.inadmin) {
+  //       next();
+  //     }
+  //     else {
+  //       next('/');
+  //     }
+  //   }
+
+  // },
   {
     path: "/to-do",
     name: "ToDo",

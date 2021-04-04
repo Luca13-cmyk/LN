@@ -26,10 +26,7 @@
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <v-list-item-title
-              >{{ contact.name }}
-              {{ contact.online ? "Online" : "Offline" }}</v-list-item-title
-            >
+            <v-list-item-title>{{ contact.name }} </v-list-item-title>
             <v-list-item-subtitle>{{ contact.email }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>

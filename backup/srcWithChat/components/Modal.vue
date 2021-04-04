@@ -11,7 +11,7 @@
           <v-tabs class="mt-5">
             <v-tab @click="type = 'Subject'">Assunto</v-tab>
             <v-tab @click="type = 'Topic'">Tópico</v-tab>
-            <v-tab @click="type = 'Contact'">Amigo</v-tab>
+            <!-- <v-tab @click="type = 'Contact'">Amigo</v-tab> -->
             <v-tab @click="type = 'Link'">Link</v-tab>
             <v-tab @click="type = 'toDo'">Lembretes</v-tab>
           </v-tabs>
@@ -46,7 +46,7 @@
                   <v-textarea
                     :rules="fieldRules"
                     required
-                    v-model="values.topic.content"
+                    v-model.trim="values.topic.content"
                     label="Comando/Contéudo (*)"
                   >
                   </v-textarea>
